@@ -1,5 +1,5 @@
 FROM python:3.11-alpine
-LABEL maintainer = kousai.ghaouari@insat.ucar.tn
+LABEL maintainer = "kousai.ghaouari@insat.ucar.tn"
 
 COPY . /app
 WORKDIR /app
