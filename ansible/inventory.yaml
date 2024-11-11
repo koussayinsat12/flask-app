@@ -1,5 +1,5 @@
 all:
   hosts:
     azure_vm:
-      ansible_host: http://98.66.180.128/
+      ansible_host: 98.66.180.128
       ansible_user: azureuser
