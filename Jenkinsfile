@@ -32,7 +32,7 @@ pipeline {
             steps{
 
                 script {
-                    sh "pwd"
+                    sh "ansible -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml azure_vm -m ping"
             
                 }
 
