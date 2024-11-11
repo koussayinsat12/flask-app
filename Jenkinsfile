@@ -31,7 +31,7 @@ pipeline {
       stage('Ping Localhost with Ansible') {
             steps {
                 script {
-                    sh 'ansible-playbook -i /var/lib/jenkins/workspace/pipeline-tp/ansibleinventory.yaml /var/lib/jenkins/workspace/pipeline-tp/ansible/ping_localhost.yaml'
+                    sh 'ansible-playbook -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml /var/lib/jenkins/workspace/pipeline-tp/ansible/ping_localhost.yaml'
                 }
             }
         }
