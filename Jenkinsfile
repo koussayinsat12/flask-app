@@ -28,6 +28,17 @@ pipeline {
             }
         }
 
+        stage('get the directory'){
+            steps{
+
+                script {
+                    sh "pwd"
+            
+                }
+
+            }
+
+        }
         
 
         stage('Deploy with Ansible') {
