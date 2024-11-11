@@ -5,9 +5,9 @@
 
   tasks:
   - name: deploy app on kubernetes
-    command: kubectl apply -f deployement.yml
+    command: kubectl apply -f /var/lib/jenkins/workspace/pipeline-tp/deployement.yml
 
   - name: create service for app
-    command: kubectl apply -f service.yml
+    command: kubectl apply -f /var/lib/jenkins/workspace/pipeline-tp/service.yml
 
 
