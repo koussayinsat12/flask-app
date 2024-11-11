@@ -38,7 +38,7 @@ pipeline {
                     ) {
                        
                             sh '''
-                            kubectl apply -f /var/lib/jenkins/workspace/pipeline-tp/deployement.yml
+                            kubectl apply -f /var/lib/jenkins/workspace/pipeline-tp/deployement.yml --validate=false
                             '''
                         
                     }
