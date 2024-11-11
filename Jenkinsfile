@@ -38,7 +38,7 @@ pipeline {
                     ) {
                        
                             sh '''
-                            kubectl apply -f /var/lib/jenkins/workspace/pipeline-tp/deployement.yml --validate=false
+                            ansible-playbook -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml /var/lib/jenkins/workspace/pipeline-tp/ansible/deploy.yaml
                             '''
                         
                     }
