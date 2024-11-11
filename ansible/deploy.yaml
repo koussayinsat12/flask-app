@@ -1,5 +1,5 @@
 ---
-- hosts: kubernetes
+- hosts: localhost
 # become: true
   user: root
 
