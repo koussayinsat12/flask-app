@@ -1,0 +1,7 @@
+- name: Deploy application to Kubernetes locally
+  hosts: localhost
+  tasks:
+    - name: Apply Kubernetes deployment
+      become: yes
+      shell: kubectl apply -f flask-app/k8s/deployment.yml
+
