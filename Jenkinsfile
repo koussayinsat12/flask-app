@@ -28,17 +28,12 @@ pipeline {
             }
         }
 
-        stage('get the directory'){
-            steps{
-
+      stage('Ping Localhost with Ansible') {
+            steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: "${ANSIBLE_SSH_CREDENTIALS}", keyFileVariable: 'SSH_KEY')]){
-                    sh "ansible -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml azure_vm -m ping --private-key=$SSH_KEY "
-                    }
+                    sh 'ansible-playbook -i /var/lib/jenkins/workspace/pipeline-tp/ansibleinventory.yaml /var/lib/jenkins/workspace/pipeline-tp/ansible/ping_localhost.yaml'
                 }
-
             }
-
         }
         
 
