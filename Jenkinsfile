@@ -35,7 +35,7 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: "${ANSIBLE_SSH_CREDENTIALS}", keyFileVariable: 'SSH_KEY')]) {
                     sh '''
-                    ansible-playbook -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yml /var/lib/jenkins/workspace/pipeline-tp/ansible/deploy.yaml
+                    ansible-playbook -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml /var/lib/jenkins/workspace/pipeline-tp/ansible/deploy.yaml
                     '''
                 }
             }
