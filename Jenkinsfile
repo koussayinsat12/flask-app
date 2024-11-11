@@ -32,8 +32,9 @@ pipeline {
             steps{
 
                 script {
-                    sh "ansible -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml azure_vm -m ping"
-            
+                    withCredentials([sshUserPrivateKey(credentialsId: "${ANSIBLE_SSH_CREDENTIALS}", keyFileVariable: 'SSH_KEY')]){
+                    sh "ansible -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml azure_vm -m ping --private-key=$SSH_KEY "
+                    }
                 }
 
             }
