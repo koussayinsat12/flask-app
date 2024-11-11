@@ -1,5 +1,6 @@
+# ansible/inventory.yml
 all:
   hosts:
-    azure_vm:
-      ansible_host: 98.66.180.128
-      ansible_user: azureuser
+    localhost:
+      ansible_connection: local
+
