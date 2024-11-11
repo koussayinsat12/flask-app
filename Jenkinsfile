@@ -36,11 +36,11 @@ pipeline {
                         credentialsId: 'minikube-jenkins-secret', 
                         serverUrl: 'https://192.168.49.2:8443'
                     ) {
-                        ansiColor('xterm') {
+                       
                             sh '''
                             ansible-playbook -i /var/lib/jenkins/workspace/pipeline-tp/ansible/inventory.yaml /var/lib/jenkins/workspace/pipeline-tp/ansible/deploy.yaml
                             '''
-                        }
+                        
                     }
                 }
             }
