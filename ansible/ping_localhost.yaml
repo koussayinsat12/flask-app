@@ -1,0 +1,6 @@
+# ansible/ping_localhost.yml
+- name: Test connectivity to localhost
+  hosts: localhost
+  tasks:
+    - name: Ping localhost
+      ansible.builtin.ping:

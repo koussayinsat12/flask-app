@@ -1,2 +1,6 @@
-[localhost]
-localhost ansible_connection=local
+# ansible/inventory.yml
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+
