@@ -1,43 +1,99 @@
 pipeline {
-    environment {
-        DOCKER_HUB_REPO = 'kousai12/python-app'
-        DOCKER_HUB_CREDENTIALS = 'dockerHub'
-        ANSIBLE_SSH_CREDENTIALS = 'ANSIBLE_SSH_KEY'
-      
-    }
     agent any
 
     stages {
-        stage('Build Docker Image') {
+      
+        stage('Setup Terraform') {
             steps {
                 script {
-                    docker.build("${DOCKER_HUB_REPO}:latest")
+                    sh """
+                    terraform init
+                    terraform validate
+                    """
                 }
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Check Resource Group') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDENTIALS}", passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                withCredentials([azureServicePrincipal(
+                    credentialsId: 'AZURE_PRINCIPLE',
+                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                    clientIdVariable: 'AZURE_CLIENT_ID',
+                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                    tenantIdVariable: 'AZURE_TENANT_ID'
+                )]) {
                     script {
-                        docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_HUB_CREDENTIALS}") {
-                            docker.image("${DOCKER_HUB_REPO}:latest").push()
+                        def result = sh(
+                            script: """
+                            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+                            az group show --name devops --query name --output tsv 2>/dev/null || echo 'not-exist'
+                            """,
+                            returnStdout: true
+                        ).trim()
+                        
+                        if (result == "not-exist") {
+                            echo "Resource group 'devops' does not exist. Failing the pipeline."
+                            error("Resource group 'devops' is required but does not exist.")
+                        } else {
+                            echo "Resource group 'devops' exists. Proceeding with the pipeline."
                         }
                     }
                 }
             }
         }
 
-        
-
-        stage('Deploy with Ansible') {
+        stage('Plan Infrastructure') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: "${ANSIBLE_SSH_CREDENTIALS}", keyFileVariable: 'SSH_KEY')]) {
-                    sh '''
-                    ansible-playbook -i ansible/inventory.yml ansible/deploy.yml --private-key=$SSH_KEY
-                    '''
+                withCredentials([azureServicePrincipal(
+                    credentialsId: 'AZURE_PRINCIPLE',
+                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                    clientIdVariable: 'AZURE_CLIENT_ID',
+                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                    tenantIdVariable: 'AZURE_TENANT_ID'
+                )]) {
+                    script {
+                        sh """
+                        terraform plan \
+                            -var 'client_id=$AZURE_CLIENT_ID' \
+                            -var 'client_secret=$AZURE_CLIENT_SECRET' \
+                            -var 'subscription_id=$AZURE_SUBSCRIPTION_ID' \
+                            -var 'tenant_id=$AZURE_TENANT_ID'
+                        """
+                    }
                 }
             }
+        }
+
+        stage('Apply Infrastructure') {
+            steps {
+                withCredentials([azureServicePrincipal(
+                    credentialsId: 'AZURE_PRINCIPLE',
+                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                    clientIdVariable: 'AZURE_CLIENT_ID',
+                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                    tenantIdVariable: 'AZURE_TENANT_ID'
+                )]) {
+                    script {
+                        sh """
+                        terraform apply -auto-approve \
+                            -var 'client_id=$AZURE_CLIENT_ID' \
+                            -var 'client_secret=$AZURE_CLIENT_SECRET' \
+                            -var 'subscription_id=$AZURE_SUBSCRIPTION_ID' \
+                            -var 'tenant_id=$AZURE_TENANT_ID'
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment succeeded!"
+        }
+        failure {
+            echo "Deployment failed."
         }
     }
 }
