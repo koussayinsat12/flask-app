@@ -16,33 +16,37 @@ pipeline {
 
         stage('Check Resource Group') {
             steps {
-                withCredentials([azureServicePrincipal(
-                    credentialsId: 'AZURE_CREDENTIALS',
-                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                    clientIdVariable: 'AZURE_CLIENT_ID',
-                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                    tenantIdVariable: 'AZURE_TENANT_ID'
-                )]) {
+                withCredentials([
+                    azureServicePrincipal(
+                        credentialsId: 'AZURE_CREDENTIALS',
+                        subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                        clientIdVariable: 'AZURE_CLIENT_ID',
+                        clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                        tenantIdVariable: 'AZURE_TENANT_ID'
+                    )
+                ]) {
                     script {
-                          sh """
-                            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-                            az group show --name devops --query name --output tsv 2>/dev/null || echo 'not-exist'
-                            """
-                      
+                        sh """
+                        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+                        az group show --name devops --query name --output tsv 2>/dev/null || echo 'not-exist'
+                        """
                     }
                 }
             }
         }
-/*
+        /*
+
         stage('Plan Infrastructure') {
             steps {
-                withCredentials([azureServicePrincipal(
-                    credentialsId: 'AZURE_PRINCIPLE',
-                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                    clientIdVariable: 'AZURE_CLIENT_ID',
-                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                    tenantIdVariable: 'AZURE_TENANT_ID'
-                )]) {
+                withCredentials([
+                    azureServicePrincipal(
+                        credentialsId: 'AZURE_CREDENTIALS',
+                        subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                        clientIdVariable: 'AZURE_CLIENT_ID',
+                        clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                        tenantIdVariable: 'AZURE_TENANT_ID'
+                    )
+                ]) {
                     script {
                         sh """
                         terraform plan \
@@ -58,13 +62,15 @@ pipeline {
 
         stage('Apply Infrastructure') {
             steps {
-                withCredentials([azureServicePrincipal(
-                    credentialsId: 'AZURE_PRINCIPLE',
-                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                    clientIdVariable: 'AZURE_CLIENT_ID',
-                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                    tenantIdVariable: 'AZURE_TENANT_ID'
-                )]) {
+                withCredentials([
+                    azureServicePrincipal(
+                        credentialsId: 'AZURE_CREDENTIALS',
+                        subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                        clientIdVariable: 'AZURE_CLIENT_ID',
+                        clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                        tenantIdVariable: 'AZURE_TENANT_ID'
+                    )
+                ]) {
                     script {
                         sh """
                         terraform apply -auto-approve \
