@@ -13,39 +13,34 @@ data "azurerm_resource_group" "existing" {
   name = "devops"
 }
 
-# Azure Service Plan (Fixed `os_type` and `sku_name`)
+# Azure Service Plan
 resource "azurerm_service_plan" "app_service_plan" {
   name                = "flask-app-service-plan"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
-  os_type             = "Linux" # Required field
-  sku_name            = "B1"    # Required field
+  os_type             = "Linux" 
+  sku_name            = "B1"    
 }
 
-# Azure App Service for Flask App
-resource "azurerm_app_service" "flask_app_service" {
+# Azure Linux Web App for Flask App
+resource "azurerm_linux_web_app" "flask_app_service" {
   name                = "flask-app-service"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
-  app_service_plan_id = azurerm_service_plan.app_service_plan.id
+  service_plan_id     = azurerm_service_plan.app_service_plan.id
 
   site_config {
-    app_command_line = "gunicorn --bind 0.0.0.0:8000 app:app" # Update based on app requirements
+    app_command_line = "gunicorn --bind 0.0.0.0:8000 app:app"
   }
 
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
   }
-
-  # Optional explicit dependency
-  depends_on = [azurerm_service_plan.app_service_plan]
 }
 
 # Deployment from GitHub
 resource "azurerm_app_service_source_control" "flask_app_source_control" {
-  app_id   = azurerm_app_service.flask_app_service.id
-  branch   = "main" # Update branch if necessary
+  app_id   = azurerm_linux_web_app.flask_app_service.id
+  branch   = "main" 
   repo_url = "https://github.com/koussayinsat12/flask-app.git"
-
-  # No manual_integration; automatic integration is used by default
 }
