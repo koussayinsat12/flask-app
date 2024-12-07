@@ -33,7 +33,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Plan Infrastructure') {
             steps {
                 withCredentials([azureServicePrincipal(
@@ -77,5 +77,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }
