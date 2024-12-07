@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        TF_CLI_ARGS = "-var 'client_id=$AZURE_CLIENT_ID' -var 'client_secret=$AZURE_CLIENT_SECRET' -var 'subscription_id=$AZURE_SUBSCRIPTION_ID' -var 'tenant_id=$AZURE_TENANT_ID'"
+        TF_CLI_ARGS = "-var='client_id=$AZURE_CLIENT_ID' -var='client_secret=$AZURE_CLIENT_SECRET' -var='subscription_id=$AZURE_SUBSCRIPTION_ID' -var='tenant_id=$AZURE_TENANT_ID'"
     }
 
     stages {
