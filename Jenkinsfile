@@ -1,15 +1,18 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/usr/bin:$PATH" // Update this path if Azure CLI is installed elsewhere
+    }
+
     stages {
-      
         stage('Setup Terraform') {
             steps {
                 script {
-                    sh """
+                    sh '''
                     terraform init
                     terraform validate
-                    """
+                    '''
                 }
             }
         }
@@ -26,15 +29,19 @@ pipeline {
                     )
                 ]) {
                     script {
-                        sh """
-                        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-                        az group show --name devops --query name --output tsv 2>/dev/null || echo 'not-exist'
-                        """
+                        sh '''
+                        set -e  # Exit immediately on failure
+                        az login --service-principal \
+                            --username "$AZURE_CLIENT_ID" \
+                            --password "$AZURE_CLIENT_SECRET" \
+                            --tenant "$AZURE_TENANT_ID"
+                        
+                        az group show --name devops --query name --output tsv 2>/dev/null || echo "Resource group does not exist"
+                        '''
                     }
                 }
             }
         }
-        
 
         stage('Plan Infrastructure') {
             steps {
@@ -48,13 +55,14 @@ pipeline {
                     )
                 ]) {
                     script {
-                        sh """
-                        terraform plan \
-                            -var 'client_id=$AZURE_CLIENT_ID' \
-                            -var 'client_secret=$AZURE_CLIENT_SECRET' \
-                            -var 'subscription_id=$AZURE_SUBSCRIPTION_ID' \
-                            -var 'tenant_id=$AZURE_TENANT_ID'
-                        """
+                        sh '''
+                        export TF_VAR_client_id="$AZURE_CLIENT_ID"
+                        export TF_VAR_client_secret="$AZURE_CLIENT_SECRET"
+                        export TF_VAR_subscription_id="$AZURE_SUBSCRIPTION_ID"
+                        export TF_VAR_tenant_id="$AZURE_TENANT_ID"
+
+                        terraform plan
+                        '''
                     }
                 }
             }
@@ -72,17 +80,17 @@ pipeline {
                     )
                 ]) {
                     script {
-                        sh """
-                        terraform apply -auto-approve \
-                            -var 'client_id=$AZURE_CLIENT_ID' \
-                            -var 'client_secret=$AZURE_CLIENT_SECRET' \
-                            -var 'subscription_id=$AZURE_SUBSCRIPTION_ID' \
-                            -var 'tenant_id=$AZURE_TENANT_ID'
-                        """
+                        sh '''
+                        export TF_VAR_client_id="$AZURE_CLIENT_ID"
+                        export TF_VAR_client_secret="$AZURE_CLIENT_SECRET"
+                        export TF_VAR_subscription_id="$AZURE_SUBSCRIPTION_ID"
+                        export TF_VAR_tenant_id="$AZURE_TENANT_ID"
+
+                        terraform apply -auto-approve
+                        '''
                     }
                 }
             }
         }
-        
     }
 }
