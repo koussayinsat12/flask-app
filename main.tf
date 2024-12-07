@@ -36,13 +36,11 @@ resource "azurerm_linux_web_app" "flask_app_service" {
   resource_group_name = data.azurerm_resource_group.existing.name
   service_plan_id     = azurerm_service_plan.app_service_plan.id
 
-  site_config {
-    app_command_line = "gunicorn --bind 0.0.0.0:8000 src.app:app"
-  }
+ 
 
   app_settings = {
   "WEBSITE_RUN_FROM_PACKAGE" = "1"
-  "PYTHON_VERSION"           = "3.9"
+  "PYTHON_VERSION"           = "3.9" 
 }
 
 }
