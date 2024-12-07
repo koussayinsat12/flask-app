@@ -42,7 +42,7 @@ resource "azurerm_linux_web_app" "flask_app_service" {
 
   app_settings = {
   "WEBSITE_RUN_FROM_PACKAGE" = "1"
-  "PYTHON_VERSION"           = "3.11.5"  # Replace 3.8 with your required version
+  "PYTHON_VERSION"           = "3.9"
 }
 
 }
