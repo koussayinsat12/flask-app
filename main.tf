@@ -13,6 +13,13 @@ data "azurerm_resource_group" "existing" {
   name = "devops"
 }
 
+# Generate a unique suffix for resource names
+resource "random_string" "suffix" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 # Azure Service Plan
 resource "azurerm_service_plan" "app_service_plan" {
   name                = "flask-app-service-plan"
@@ -24,7 +31,7 @@ resource "azurerm_service_plan" "app_service_plan" {
 
 # Azure Linux Web App for Flask App
 resource "azurerm_linux_web_app" "flask_app_service" {
-  name                = "flask-app-service"
+  name                = "flask-app-service-${random_string.suffix.result}" # Dynamic name
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
   service_plan_id     = azurerm_service_plan.app_service_plan.id
