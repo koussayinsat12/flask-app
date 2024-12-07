@@ -17,7 +17,7 @@ pipeline {
         stage('Check Resource Group') {
             steps {
                 withCredentials([azureServicePrincipal(
-                    credentialsId: 'AZURE_PRINCIPLE',
+                    credentialsId: 'AZURE_CREDENTIALS',
                     subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
                     clientIdVariable: 'AZURE_CLIENT_ID',
                     clientSecretVariable: 'AZURE_CLIENT_SECRET',
