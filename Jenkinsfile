@@ -34,7 +34,7 @@ pipeline {
                 }
             }
         }
-        /*
+        
 
         stage('Plan Infrastructure') {
             steps {
@@ -83,6 +83,6 @@ pipeline {
                 }
             }
         }
-        */
+        
     }
 }
