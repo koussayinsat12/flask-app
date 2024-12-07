@@ -13,18 +13,13 @@ data "azurerm_resource_group" "existing" {
   name = "devops"
 }
 
-# Azure Service Plan (Replacing deprecated resource)
+# Azure Service Plan (Fixed `os_type` and `sku_name`)
 resource "azurerm_service_plan" "app_service_plan" {
   name                = "flask-app-service-plan"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
-  kind                = "Linux"
-  reserved            = true
-
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  os_type             = "Linux" # Required field
+  sku_name            = "B1"    # Required field
 }
 
 # Azure App Service for Flask App
@@ -46,7 +41,7 @@ resource "azurerm_app_service" "flask_app_service" {
   depends_on = [azurerm_service_plan.app_service_plan]
 }
 
-# Deployment from GitHub (Removing `manual_integration`)
+# Deployment from GitHub
 resource "azurerm_app_service_source_control" "flask_app_source_control" {
   app_id   = azurerm_app_service.flask_app_service.id
   branch   = "main" # Update branch if necessary
