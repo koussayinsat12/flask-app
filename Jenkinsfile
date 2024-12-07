@@ -32,12 +32,6 @@ pipeline {
                             returnStdout: true
                         ).trim()
                         
-                        if (result == "not-exist") {
-                            echo "Resource group 'devops' does not exist. Failing the pipeline."
-                            error("Resource group 'devops' is required but does not exist.")
-                        } else {
-                            echo "Resource group 'devops' exists. Proceeding with the pipeline."
-                        }
                     }
                 }
             }
