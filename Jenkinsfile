@@ -24,13 +24,11 @@ pipeline {
                     tenantIdVariable: 'AZURE_TENANT_ID'
                 )]) {
                     script {
-                        def result = sh(
-                            script: """
+                          sh """
                             az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
                             az group show --name devops --query name --output tsv 2>/dev/null || echo 'not-exist'
-                            """,
-                            returnStdout: true
-                        ).trim()
+                            """
+                      
                     }
                 }
             }
