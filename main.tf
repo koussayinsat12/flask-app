@@ -51,6 +51,7 @@ resource "azurerm_linux_web_app" "flask_app_service" {
 resource "azurerm_app_service_source_control" "flask_app_source_control" {
   app_id                = azurerm_linux_web_app.flask_app_service.id
   branch                = "main"
+  organisation          = "koussayinsat12"
   repo_url              = "https://github.com/koussayinsat12/flask-app.git"
   use_manual_integration = true
 }
