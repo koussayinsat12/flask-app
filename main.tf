@@ -37,7 +37,7 @@ resource "azurerm_linux_web_app" "flask_app_service" {
   service_plan_id     = azurerm_service_plan.app_service_plan.id
 
   site_config {
-  
+    app_command_line = "gunicorn --bind 0.0.0.0:8000 app:app"
   }
 
   app_settings = {
@@ -84,13 +84,21 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostics" {
   target_resource_id         = azurerm_linux_web_app.flask_app_service.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.log_workspace.id
 
-  log {
+  # Corrected log settings
+  log_settings {
     category = "AppServiceHTTPLogs"
     enabled  = true
+    retention_policy {
+      enabled = false
+    }
   }
 
-  metric {
+  # Corrected metric settings
+  metric_settings {
     category = "AllMetrics"
     enabled  = true
+    retention_policy {
+      enabled = false
+    }
   }
 }
