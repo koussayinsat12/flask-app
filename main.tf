@@ -60,12 +60,8 @@ resource "azurerm_app_service_source_control" "flask_app_source_control" {
   app_id                = azurerm_linux_web_app.flask_app_service.id
   branch                = "main"
   repo_url              = "https://github.com/koussayinsat12/flask-app.git"
-  use_manual_integration = true
+  #use_manual_integration = true
 }
 
 # GitHub Token for Deployment
-resource "azurerm_source_control_token" "source_control_token" {
-  type         = "GitHub"
-  token        = var.github_auth_token
-  token_secret = var.github_auth_token
-}
+
