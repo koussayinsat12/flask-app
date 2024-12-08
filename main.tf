@@ -41,18 +41,12 @@ resource "azurerm_linux_web_app" "example" {
   resource_group_name = data.azurerm_resource_group.existing.name
   service_plan_id     = azurerm_service_plan.example.id
 
-  site_config {
-    always_on     = false
-    http2_enabled = true
-  }
+  application_stack{
+    
+    docker_image_name = var.docker_image
+    docker_registry_url = "https://index.docker.io"
+}
 
-
-  
-  app_settings = {
-    "DOCKER_ENABLE_CI"            = "true"
-    "DOCKER_CUSTOM_IMAGE_NAME"    = var.docker_image
-    "DOCKER_REGISTRY_SERVER_URL"  = "https://index.docker.io/v1/" # Docker Hub URL
-  }
 }
 
 
