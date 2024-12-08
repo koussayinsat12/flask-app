@@ -35,17 +35,24 @@ resource "azurerm_application_insights" "example" {
   resource_group_name = data.azurerm_resource_group.existing.name
   application_type    = "web"
 }
-
-# Azure Linux Web App
 resource "azurerm_linux_web_app" "example" {
   name                = "web-app-${random_string.suffix.result}" # Ensure a globally unique name
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
   service_plan_id     = azurerm_service_plan.example.id
 
+  site_config {
+    always_on     = false
+    http2_enabled = true
+  }
+
+
+  
   app_settings = {
     "DOCKER_ENABLE_CI"            = "true"
     "DOCKER_CUSTOM_IMAGE_NAME"    = var.docker_image
     "DOCKER_REGISTRY_SERVER_URL"  = "https://index.docker.io/v1/" # Docker Hub URL
   }
 }
+
+
