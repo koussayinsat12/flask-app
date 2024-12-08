@@ -37,31 +37,32 @@ resource "azurerm_application_insights" "app_insights" {
   application_type    = "web"
 }
 
-# Azure Linux Web App for Flask App
-resource "azurerm_linux_web_app" "flask_app_service" {
-  name                = "flask-app-service-${random_string.suffix.result}"
+resource "random_id" "suffix" {
+  byte_length = 2
+}
+
+
+resource "azurerm_linux_web_app" "example" {
+  name                = "web-app-${random_id.suffix.hex}" # Ensure a globally unique name
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
-  service_plan_id     = azurerm_service_plan.app_service_plan.id
+  service_plan_id     = azurerm_service_plan.example.id
 
   site_config {
-    app_command_line = "gunicorn --bind 0.0.0.0:8000 app:app"
+    always_on     = false
+    http2_enabled = true
   }
 
   app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE"            = "1"
-    "PYTHON_VERSION"                      = "3.9"
-    "APPINSIGHTS_INSTRUMENTATIONKEY"      = azurerm_application_insights.app_insights.instrumentation_key
+    "DOCKER_ENABLE_CI"       = "true"
+    "DOCKER_CUSTOM_IMAGE_NAME" = var.docker_image
+  }
+
+  identity {
+    type = "SystemAssigned"
   }
 }
 
-# Deployment from GitHub
-resource "azurerm_app_service_source_control" "flask_app_source_control" {
-  app_id                = azurerm_linux_web_app.flask_app_service.id
-  branch                = "main"
-  repo_url              = "https://github.com/koussayinsat12/flask-app.git"
-  #use_manual_integration = true
-}
-
+# Terraf
 # GitHub Token for Deployment
 
