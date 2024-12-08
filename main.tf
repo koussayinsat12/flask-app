@@ -51,7 +51,7 @@ resource "azurerm_linux_web_app" "example" {
     "DOCKER_ENABLE_CI"       = "true"
     "DOCKER_CUSTOM_IMAGE_NAME" = var.docker_image
 
-    "DOCKER_REGISTRY_SERVER_URL" = "https://index.docker.io"
+    DOCKER_REGISTRY_SERVER_URL = "https://index.docker.io"
   }
 
 }
