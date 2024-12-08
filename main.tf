@@ -21,7 +21,7 @@ resource "random_string" "suffix" {
 }
 
 # Azure Service Plan
-resource "azurerm_service_plan" "app_service_plan" {
+resource "azurerm_service_plan" "example" {
   name                = "flask-app-service-plan"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
@@ -30,20 +30,16 @@ resource "azurerm_service_plan" "app_service_plan" {
 }
 
 # Azure Application Insights
-resource "azurerm_application_insights" "app_insights" {
+resource "azurerm_application_insights" "example" {
   name                = "flask-app-insights-${random_string.suffix.result}"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
   application_type    = "web"
 }
 
-resource "random_id" "suffix" {
-  byte_length = 2
-}
-
-
+# Azure Linux Web App
 resource "azurerm_linux_web_app" "example" {
-  name                = "web-app-${random_id.suffix.hex}" # Ensure a globally unique name
+  name                = "web-app-${random_string.suffix.result}" # Ensure a globally unique name
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
   service_plan_id     = azurerm_service_plan.example.id
@@ -54,7 +50,7 @@ resource "azurerm_linux_web_app" "example" {
   }
 
   app_settings = {
-    "DOCKER_ENABLE_CI"       = "true"
+    "DOCKER_ENABLE_CI"        = "true",
     "DOCKER_CUSTOM_IMAGE_NAME" = var.docker_image
   }
 
@@ -62,7 +58,3 @@ resource "azurerm_linux_web_app" "example" {
     type = "SystemAssigned"
   }
 }
-
-# Terraf
-# GitHub Token for Deployment
-
