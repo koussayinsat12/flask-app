@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8080
 
 ENTRYPOINT ["python"]
-CMD ["src/app.py"]
+CMD ["gunicorn --bind 0.0.0.0:8000 src.app:app"]
