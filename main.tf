@@ -37,7 +37,7 @@ resource "azurerm_linux_web_app" "flask_app_service" {
   service_plan_id     = azurerm_service_plan.app_service_plan.id
 
   site_config {
-    app_command_line = "gunicorn --bind 0.0.0.0:8000 app:app"
+  
   }
 
   app_settings = {
