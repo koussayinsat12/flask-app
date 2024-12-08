@@ -33,6 +33,12 @@ pipeline {
             steps {
                 sh '''
                 terraform init
+                '''
+            }
+        }
+        stage('Validate Terraform') {
+            steps {
+                sh '''
                 terraform validate
                 '''
             }
@@ -104,38 +110,6 @@ pipeline {
                     export TF_VAR_tenant_id="$AZURE_TENANT_ID"
                     export TF_VAR_docker_image="${DOCKER_HUB_REPO}:latest"
                     terraform apply -auto-approve
-                    '''
-                }
-            }
-        }
-
-        stage('Deploy Docker Container') {
-            steps {
-                withCredentials([
-                    azureServicePrincipal(
-                        credentialsId: 'AZURE_CREDENTIALS',
-                        subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                        clientIdVariable: 'AZURE_CLIENT_ID',
-                        clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                        tenantIdVariable: 'AZURE_TENANT_ID'
-                    )
-                ]) {
-                    sh '''
-                    echo "Authenticating with Azure using Service Principal..."
-                    az login --service-principal \
-                        --username "$AZURE_CLIENT_ID" \
-                        --password "$AZURE_CLIENT_SECRET" \
-                        --tenant "$AZURE_TENANT_ID"
-
-                    echo "Deploying Docker container to Azure Web App..."
-                    # Get the web app name from Terraform output
-                    WEB_APP_NAME=$(terraform output -raw web_app_name)
-                    
-                    # Update the web app to use the Docker image
-                    az webapp config container set \
-                        --resource-group ${RESOURCE_GROUP} \
-                        --name ${WEB_APP_NAME} \
-                        --docker-custom-image-name "${DOCKER_HUB_REPO}:latest"
                     '''
                 }
             }
