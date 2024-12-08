@@ -29,6 +29,14 @@ resource "azurerm_service_plan" "app_service_plan" {
   sku_name            = "B1"
 }
 
+# Azure Application Insights
+resource "azurerm_application_insights" "app_insights" {
+  name                = "flask-app-insights-${random_string.suffix.result}"
+  location            = data.azurerm_resource_group.existing.location
+  resource_group_name = data.azurerm_resource_group.existing.name
+  application_type    = "web"
+}
+
 # Azure Linux Web App for Flask App
 resource "azurerm_linux_web_app" "flask_app_service" {
   name                = "flask-app-service-${random_string.suffix.result}"
@@ -60,45 +68,4 @@ resource "azurerm_source_control_token" "source_control_token" {
   type         = "GitHub"
   token        = var.github_auth_token
   token_secret = var.github_auth_token
-}
-
-# Monitoring: Application Insights
-resource "azurerm_application_insights" "app_insights" {
-  name                = "flask-app-insights-${random_string.suffix.result}"
-  location            = data.azurerm_resource_group.existing.location
-  resource_group_name = data.azurerm_resource_group.existing.name
-  application_type    = "web"
-}
-
-# Log Analytics Workspace
-resource "azurerm_log_analytics_workspace" "log_workspace" {
-  name                = "flask-log-workspace-${random_string.suffix.result}"
-  location            = data.azurerm_resource_group.existing.location
-  resource_group_name = data.azurerm_resource_group.existing.name
-  sku                 = "PerGB2018"
-}
-
-# Monitoring: Diagnostic Settings
-resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostics" {
-  name                       = "flask-app-diagnostics"
-  target_resource_id         = azurerm_linux_web_app.flask_app_service.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_workspace.id
-
-  # Corrected log block
-  log {
-    category = "AppServiceHTTPLogs"
-    enabled  = true
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  # Corrected metric block
-  metric {
-    category = "AllMetrics"
-    enabled  = true
-    retention_policy {
-      enabled = false
-    }
-  }
 }
