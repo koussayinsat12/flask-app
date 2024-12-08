@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         PATH = "/usr/bin:$PATH" // Update if Azure CLI is installed elsewhere
+        DOCKER_HUB_REPO = 'kousai12/python-app'
         DOCKER_HUB_CREDENTIALS = 'dockerHub'
         RESOURCE_GROUP = 'devops' // Set the resource group name
         DOCKER_IMAGE = "kousai12/python-app:latest"
@@ -112,6 +113,6 @@ pipeline {
                 }
             }
         }
-        
+         
     }
 }
