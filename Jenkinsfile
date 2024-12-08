@@ -76,8 +76,7 @@ pipeline {
                         clientIdVariable: 'AZURE_CLIENT_ID',
                         clientSecretVariable: 'AZURE_CLIENT_SECRET',
                         tenantIdVariable: 'AZURE_TENANT_ID'
-                    ),
-                    string(credentialsId: 'GITHUB_CREDENTIALS', variable: 'GITHUB_AUTH_TOKEN')
+                    )
                 ]) {
                     sh '''
                     export TF_VAR_client_id="$AZURE_CLIENT_ID"
@@ -100,8 +99,7 @@ pipeline {
                         clientIdVariable: 'AZURE_CLIENT_ID',
                         clientSecretVariable: 'AZURE_CLIENT_SECRET',
                         tenantIdVariable: 'AZURE_TENANT_ID'
-                    ),
-                    string(credentialsId: 'GITHUB_CREDENTIALS', variable: 'GITHUB_AUTH_TOKEN')
+                    )
                 ]) {
                     sh '''
                     export TF_VAR_client_id="$AZURE_CLIENT_ID"
