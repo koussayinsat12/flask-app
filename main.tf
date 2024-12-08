@@ -84,8 +84,8 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostics" {
   target_resource_id         = azurerm_linux_web_app.flask_app_service.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.log_workspace.id
 
-  # Corrected log settings
-  log_settings {
+  # Corrected log block
+  log {
     category = "AppServiceHTTPLogs"
     enabled  = true
     retention_policy {
@@ -93,8 +93,8 @@ resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostics" {
     }
   }
 
-  # Corrected metric settings
-  metric_settings {
+  # Corrected metric block
+  metric {
     category = "AllMetrics"
     enabled  = true
     retention_policy {
