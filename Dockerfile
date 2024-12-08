@@ -1,12 +1,21 @@
-FROM python:3.11-alpine
-LABEL maintainer = "kousai.ghaouari@insat.ucar.tn"
+# Use Python 3.9 base image
+FROM python:3.9-alpine
 
-COPY . /app
+# Set the maintainer label
+LABEL maintainer="kousai.ghaouari@insat.ucar.tn"
+
+# Set the working directory inside the container
 WORKDIR /app
 
-RUN pip install -r requirements.txt
+# Copy the app code into the working directory
+COPY . /app
 
-EXPOSE 8080
+# Install required dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python"]
-CMD ["gunicorn --bind 0.0.0.0:8000 src.app:app"]
+# Expose the application port
+EXPOSE 8000
+
+# Set the entrypoint for the container to run gunicorn with the correct path
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8000", "src.app:app"]
+
