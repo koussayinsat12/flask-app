@@ -46,10 +46,6 @@ resource "azurerm_linux_web_app" "example" {
     http2_enabled = true
   }
 
-  site_config {
-    always_on     = false
-    http2_enabled = true
-  }
 
   app_settings = {
     "DOCKER_ENABLE_CI"       = "true"
