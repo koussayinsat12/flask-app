@@ -16,7 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose the application port
 EXPOSE 8000
 
-# Set the entrypoint for the container to run the Python application
-ENTRYPOINT ["python", "src/app.py"]
-
+# Set the entrypoint for the container to run gunicorn with the correct path
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8000", "src.app:app"]
 
