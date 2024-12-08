@@ -6,6 +6,7 @@ pipeline {
         DOCKER_HUB_REPO = 'kousai12/python-app'
         DOCKER_HUB_CREDENTIALS = 'dockerHub'
         RESOURCE_GROUP = 'devops' // Set the resource group name
+        DOCKER_IMAGE = "kousai12/python-app:latest"
     }
 
     stages {
@@ -112,6 +113,36 @@ pipeline {
                 }
             }
         }
+         stage('Deploy Docker Container') {
+            steps {
+            withCredentials([
+                    azureServicePrincipal(
+                        credentialsId: 'AZURE_CREDENTIALS',
+                        subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                        clientIdVariable: 'AZURE_CLIENT_ID',
+                        clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                        tenantIdVariable: 'AZURE_TENANT_ID'
+                    )
+                ])
+            {
 
+                sh '''
+                    az login --service-principal \
+                        --username "$AZURE_CLIENT_ID" \
+                        --password "$AZURE_CLIENT_SECRET" \
+                        --tenant "$AZURE_TENANT_ID"
+
+                    # Get the web app name from Terraform output
+                    WEB_APP_NAME=$(terraform output -raw web_app_name)
+                    # Update the web app to use the Docker image
+                    az webapp config container set \
+                        --resource-group ${RESOURCE_GROUP} \
+                        --name ${WEB_APP_NAME} \
+                        --container-image-name ${DOCKER_IMAGE}
+                '''
+            }
+        }
+
+    }
     }
 }
