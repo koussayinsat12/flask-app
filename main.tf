@@ -27,6 +27,13 @@ resource "azurerm_service_plan" "example" {
   os_type             = "Linux"
   sku_name            = "B1"
 }
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "workspace-test"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
 
 # Azure Application Insights
 resource "azurerm_application_insights" "example" {
