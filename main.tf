@@ -40,18 +40,18 @@ resource "azurerm_linux_web_app" "example" {
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
   service_plan_id     = azurerm_service_plan.example.id
-
+  public_network_access_enabled = true
   site_config{
-    always_on     = false
-    http2_enabled = true
+    
+    application_stack{
+
+      docker_image_name = var.docker_image
+      docker_registry_url = "https://index.docker.io"
+   }
+
   }
 
-
-  app_settings = {
-    "DOCKER_ENABLE_CI"       = "true"
-    "DOCKER_CUSTOM_IMAGE_NAME" = var.docker_image
-     DOCKER_REGISTRY_SERVER_URL = "https://index.docker.io"
-  }
+  
 
 }
 
