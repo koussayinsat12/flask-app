@@ -51,7 +51,6 @@ resource "azurerm_linux_web_app" "flask_app_service" {
 resource "azurerm_app_service_source_control" "flask_app_source_control" {
   app_id                = azurerm_linux_web_app.flask_app_service.id
   branch                = "main"
-  organisation          = "koussayinsat12"
   repo_url              = "https://github.com/koussayinsat12/flask-app.git"
   use_manual_integration = true
 }
@@ -71,11 +70,19 @@ resource "azurerm_application_insights" "app_insights" {
   application_type    = "web"
 }
 
+# Log Analytics Workspace
+resource "azurerm_log_analytics_workspace" "log_workspace" {
+  name                = "flask-log-workspace-${random_string.suffix.result}"
+  location            = data.azurerm_resource_group.existing.location
+  resource_group_name = data.azurerm_resource_group.existing.name
+  sku                 = "PerGB2018"
+}
+
 # Monitoring: Diagnostic Settings
 resource "azurerm_monitor_diagnostic_setting" "app_service_diagnostics" {
   name                       = "flask-app-diagnostics"
   target_resource_id         = azurerm_linux_web_app.flask_app_service.id
-  log_analytics_workspace_id = azurerm_application_insights.app_insights.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_workspace.id
 
   log {
     category = "AppServiceHTTPLogs"
