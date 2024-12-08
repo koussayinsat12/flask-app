@@ -84,7 +84,7 @@ pipeline {
                     export TF_VAR_client_secret="$AZURE_CLIENT_SECRET"
                     export TF_VAR_subscription_id="$AZURE_SUBSCRIPTION_ID"
                     export TF_VAR_tenant_id="$AZURE_TENANT_ID"
-                    export TF_VAR_github_auth_token="$GITHUB_AUTH_TOKEN"
+                    export TF_VAR_docker_image="${DOCKER_HUB_REPO}:latest"
                     terraform plan
                     '''
                 }
