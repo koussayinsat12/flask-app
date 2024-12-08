@@ -43,7 +43,9 @@ resource "azurerm_linux_web_app" "example" {
 
   site_config{
 
-    
+    always_on     = false
+    http2_enabled = true
+
   }
 
   application_stack{
