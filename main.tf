@@ -29,8 +29,8 @@ resource "azurerm_service_plan" "example" {
 }
 resource "azurerm_log_analytics_workspace" "example" {
   name                = "workspace-test"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  location            = data.azurerm_resource_group.existing.location
+  resource_group_name = data.azurerm_resource_group.existing.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
 }
